@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.iomdroid.tvshow.ShowDetailActivity">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <RelativeLayout
+            android:id="@+id/form_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorHeavyDarkGray">
+
+            <ImageView
+                android:id="@+id/ivShowDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:background="@color/colorHeavyDarkGray"
+                android:foregroundGravity="center" />
+
+            <ImageView
+                android:id="@+id/ivShowDetailBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="20dp"
+                android:src="@drawable/icn_back" />
+
+
+            <LinearLayout
+                android:id="@+id/llShowDetailShowSpec"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ivShowDetail"
+                android:background="@color/colorDarkGray"
+                android:gravity="left|center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:src="@drawable/icn_info"
+                    android:visibility="invisible" />
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:background="@color/colorDarkGray"
+                    android:gravity="left|center_vertical"
+                    android:orientation="vertical"
+                    android:paddingRight="30dp"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="30dp">
+
+                    <TextView
+                        android:id="@+id/tvShowDetailName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvShowDetailOthers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorWhite" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/llShowDetailShowSpec"
+                android:background="@color/colorHeavyDarkGray"
+                android:gravity="left|center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:src="@drawable/icn_info" />
+
+                <TextView
+                    android:id="@+id/tvShowDetailDecription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="5"
+                    android:paddingBottom="20dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="20dp"
+                    android:textColor="@color/colorWhite" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/ivShowDetail"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="-30dp"
+                android:src="@drawable/icn_play" />
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
