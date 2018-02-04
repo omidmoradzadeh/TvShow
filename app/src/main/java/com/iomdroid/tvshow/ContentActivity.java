@@ -2,9 +2,7 @@ package com.iomdroid.tvshow;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,15 +15,13 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import Adapters.ShowGridAdapter;
-import config.applicationConfig;
+import config.application;
 import DTO.Show;
 
 public class ContentActivity extends AppCompatActivity
@@ -37,15 +33,16 @@ public class ContentActivity extends AppCompatActivity
         setContentView(R.layout.activity_content);
 
         try {
-            applicationConfig applicationConfig = (config.applicationConfig) getApplication();
+            //get Data Objec from applciation
+            application applicationConfig = (application) getApplication();
             List<Show> shows = applicationConfig.getShows();
-            List<ImageView> imageViews = applicationConfig.getImageViews();
 
-
-            ShowGridAdapter showGridAdapter = new ShowGridAdapter(this, shows, imageViews );
+            //create Grid Adapter with existing data
+            ShowGridAdapter showGridAdapter = new ShowGridAdapter(this, shows);
             GridView gridview = (GridView) findViewById(R.id.gridview);
             gridview.setAdapter(showGridAdapter);
 
+            //create grid click listiner
             gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @SuppressLint("NewApi")
@@ -53,8 +50,8 @@ public class ContentActivity extends AppCompatActivity
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     // TODO Auto-generated method stub
-                    String selectedItem = parent.getItemAtPosition(position).toString();
-                    Intent intent = new Intent(getBaseContext(), ShowDetailActivity.class);
+                   String selectedItem = parent.getItemAtPosition(position).toString();
+                    Intent intent = new Intent(getApplicationContext(), ShowDetailActivity.class);
                     intent.putExtra("selectedIndex", Integer.valueOf(selectedItem));
                     startActivity(intent);
                 }

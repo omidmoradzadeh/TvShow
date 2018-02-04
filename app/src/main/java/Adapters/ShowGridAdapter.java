@@ -24,15 +24,13 @@ public class ShowGridAdapter extends BaseAdapter {
 
     private LayoutInflater layoutinflater;
     private List<Show> listStorage;
-    List<ImageView> imageViews;
     private Context context;
     Utils.ImageUtil imageUtil = new ImageUtil();
 
-    public ShowGridAdapter(Context context, List<Show> customizedListView, List<ImageView> imageViews) {
+    public ShowGridAdapter(Context context, List<Show> customizedListView) {
         this.context = context;
         layoutinflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         listStorage = customizedListView;
-        this.imageViews = imageViews;
     }
 
     @Override
@@ -64,12 +62,9 @@ public class ShowGridAdapter extends BaseAdapter {
                 listViewHolder = (ViewHolder) convertView.getTag();
             }
 
-            Bitmap image = imageUtil.convertImageViewToBitmap(imageViews.get(position));
-            if (image != null) {
-                listViewHolder.imageInListView.setImageBitmap(image);
-            } else {
-                listViewHolder.imageInListView.setImageResource(R.drawable.image_not_available);
-            }
+            ImageLoader imageLoader = new ImageLoader(context);
+            imageLoader.DisplayImage(listStorage.get(position).getImage().getOriginal(), listViewHolder.imageInListView);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }

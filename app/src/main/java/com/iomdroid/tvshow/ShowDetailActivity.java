@@ -1,6 +1,5 @@
 package com.iomdroid.tvshow;
 
-import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -10,12 +9,11 @@ import android.widget.TextView;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import config.applicationConfig;
+import Component.ImageCache.ImageLoader;
+import config.application;
 import DTO.Show;
-import Utils.ImageUtil;
 
 public class ShowDetailActivity extends AppCompatActivity {
 
@@ -24,20 +22,23 @@ public class ShowDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_detail);
         try {
+            //get selected index from content activity
             int selectedIndex = getIntent().getIntExtra("selectedIndex", 0);
-            ImageUtil imageUtil =new ImageUtil();
-            applicationConfig applicationConfig = (config.applicationConfig) getApplication();
-            List<Show> shows = applicationConfig.getShows();
-            ArrayList<ImageView> imageViews = applicationConfig.getImageViews();
+            application applicationConfig = (application) getApplication();
 
+            //get json from application
+            List<Show> shows = applicationConfig.getShows();
+
+            //define varibale for elements
             ImageView ivShowDetail = (ImageView) findViewById(R.id.ivShowDetail);
             ImageView ivShowDetailBack = (ImageView) findViewById(R.id.ivShowDetailBack);
             TextView tvShowDetailName = (TextView) findViewById(R.id.tvShowDetailName);
             TextView tvShowDetailOthers = (TextView) findViewById(R.id.tvShowDetailOthers);
             TextView tvShowDetailDecription = (TextView) findViewById(R.id.tvShowDetailDecription);
 
-            ivShowDetail.setImageBitmap(imageUtil.convertImageViewToBitmap(imageViews.get(selectedIndex)));
-            //ivShowDetail.setImageBitmap(imgs.get(selectedIndex));
+            //load data into elements
+            ImageLoader imageLoader = new ImageLoader(getApplicationContext());
+            imageLoader.DisplayImage(shows.get(selectedIndex).getImage().getOriginal(), ivShowDetail);
             tvShowDetailName.setText(shows.get(selectedIndex).getName());
             tvShowDetailOthers.setText(shows.get(selectedIndex).getPremiered() + " - "
                     + shows.get(selectedIndex).getRuntime() + " min - "
@@ -50,9 +51,7 @@ public class ShowDetailActivity extends AppCompatActivity {
                     finish();
                 }
             });
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TastyToast.makeText(this, "ٍError occurred in processing data...", TastyToast.LENGTH_LONG, TastyToast.ERROR);
             finish();
         }

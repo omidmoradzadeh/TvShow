@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,9 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import Component.ImageCache.ImageLoader;
-import Utils.ImageUtil;
-import config.applicationConfig;
+import config.application;
 import DTO.SearchMovie;
 import DTO.Show;
 
@@ -51,10 +48,9 @@ public class SplashActivity extends AppCompatActivity {
 
 
         try {
-
+            //check access to storage
             ActivityCompat.requestPermissions(SplashActivity.this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    1);
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         } catch (Exception ex) {
 
         }
@@ -66,39 +62,29 @@ public class SplashActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1: {
 
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     try {
-                        String result = new GetShowList(this).execute("http://api.tvmaze.com/search/shows?q=gold").get();
+                        String result = new GetShowList(this).execute("http://api.tvmaze.com/search/shows?q=father").get();
                         if (!result.isEmpty())
                             finish();
                     } catch (InterruptedException e) {
                         TastyToast.makeText(this, "ٍError occurred in connection ...", TastyToast.LENGTH_LONG, TastyToast.ERROR);
                         e.printStackTrace();
-                        //finish();
                     } catch (ExecutionException e) {
                         TastyToast.makeText(this, "ٍError occurred in connection ...", TastyToast.LENGTH_LONG, TastyToast.ERROR);
                         e.printStackTrace();
-                        //finish();
                     }
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                 } else {
                     TastyToast.makeText(this, "ٍPermission denied to read your External storage", TastyToast.LENGTH_LONG, TastyToast.ERROR);
                     finish();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    //Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
+    //Get Json Data from Api
     public class GetShowList extends AsyncTask<String, Void, String> {
         public static final String REQUEST_METHOD = "GET";
         public static final int READ_TIMEOUT = 15000;
@@ -123,13 +109,10 @@ public class SplashActivity extends AppCompatActivity {
             String stringUrl = params[0];
             String result = "";
 
-            //String inputLine;
-
-
             try {
                 Gson gson = new Gson();
                 URL myUrl = new URL(stringUrl);
-
+                //Make request to api
                 HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
                 connection.setRequestMethod(REQUEST_METHOD);
                 connection.setReadTimeout(READ_TIMEOUT);
@@ -143,6 +126,7 @@ public class SplashActivity extends AppCompatActivity {
                     InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
                     BufferedReader reader = new BufferedReader(streamReader);
                     try {
+                        //cast json to object
                         searchMovie = gson.fromJson(reader, SearchMovie[].class);
                     } catch (Exception ex) {
                         isSuccess = false;
@@ -183,92 +167,18 @@ public class SplashActivity extends AppCompatActivity {
                 imageViews = new ArrayList<ImageView>();
                 List<String> urlList = new ArrayList<>();
                 for (int i = 0; i < searchMovie.length; i++) {
-                    imageViews.add(new ImageView(context));
-                    String imgSrcUrl;
-                    if (searchMovie[i].getShow() == null || searchMovie[i].getShow().getImage() == null || searchMovie[i].getShow().getImage().getOriginal() == null) {
-                        imgSrcUrl = "";
-                    } else {
-                        imgSrcUrl = searchMovie[i].getShow().getImage().getOriginal();
-                    }
-                    urlList.add(imgSrcUrl);
+                    showArrayList.add(searchMovie[i].getShow());
                 }
-                new GetShowImages(urlList, context).execute();
+                //call content activity
+                Intent intent = new Intent(context, ContentActivity.class);
+                application app = (application) getApplication();
+                app.setShows(showArrayList);
+                startActivity(intent);
             } else
                 TastyToast.makeText(context, errorMessage, TastyToast.LENGTH_LONG, TastyToast.ERROR);
-
         }
     }
 
-    public class GetShowImages extends AsyncTask<String, Void, String> {
-        ImageView iv;
-        List<String> fileUrls;
-        Context context;
-        boolean isSuccess = true;
-        String errorMessage = "";
 
-        public GetShowImages(List<String> fileUrl, Context context) {
-            this.iv = iv;
-            this.fileUrls = fileUrl;
-            this.context = context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            // String stringUrl = params[0];
-            String result = "";
-            imageArrayList = new ArrayList<Bitmap>();
-
-
-            ImageLoader imageLoader = new ImageLoader(context);
-            try {
-                for (int i = 0; i < fileUrls.size(); i++) {
-                    String fileUrl = fileUrls.get(i);
-                    if (fileUrl != null && !fileUrl.isEmpty()) {
-                        try {
-                            imageLoader.DisplayImage(fileUrls.get(i), imageViews.get(i));
-                        } catch (Exception ex) {}
-                    }
-
-                }
-            } catch (Exception ex) {
-                errorMessage = "ٍError while processing images ...";
-                isSuccess = false;
-                ex.printStackTrace();
-                //finish();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            try {
-                if (isSuccess) {
-                    Utils.ImageUtil imageUtil =new ImageUtil();
-                    ArrayList<Show> showArrayList = new ArrayList<Show>();
-                    for (int i = 0; i < searchMovie.length; i++) {
-                        showArrayList.add(searchMovie[i].getShow());
-                    }
-
-                    Intent intent = new Intent(context, ContentActivity.class);
-                    applicationConfig app = (applicationConfig) getApplication();
-                    app.setShows(showArrayList);
-                    app.setImageViews(imageViews);
-                    startActivity(intent);
-                } else {
-                    TastyToast.makeText(context, errorMessage, TastyToast.LENGTH_LONG, TastyToast.ERROR);
-                }
-            } catch (Exception ex) {
-                TastyToast.makeText(context, "ٍError while processing images ...", TastyToast.LENGTH_LONG, TastyToast.ERROR);
-                ex.printStackTrace();
-                //finish();
-            }
-        }
-    }
 }
 
